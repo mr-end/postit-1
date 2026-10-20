@@ -6,28 +6,27 @@ namespace: postit-1-dev
 # Namespace/project is created by AAP (CreateProject) during scaffolding —
 # not by Argo CD (no CreateNamespace, no Namespace manifest here).
 resources:
-  - ../../base
+- ../../base
 
-patches:
-  - path: configmap.yaml
   # secret.yaml is intentionally NOT patched here — it's gitignored and applied
   # out-of-band (kubectl apply), so Argo CD never needs it. See deploy/README.md.
-  - path: pvc.yaml
-  - path: route.yaml
-  - path: patches/backend-replicas.yaml
-  - path: patches/frontend-replicas.yaml
+patches:
+- path: configmap.yaml
+- path: pvc.yaml
+- path: route.yaml
+- path: patches/backend-replicas.yaml
+- path: patches/frontend-replicas.yaml
 
 images:
-  - name: postit-backend
-    newName: ghcr.io/mr-end/postit-1/postit-backend
-    newTag: latest
-  - name: postit-frontend
-    newName: ghcr.io/mr-end/postit-1/postit-frontend
-    newTag: latest
+- name: postit-backend
+  newName: ghcr.io/mr-end/postit-1/postit-backend
+  newTag: 2e77182
+- name: postit-frontend
+  newName: ghcr.io/mr-end/postit-1/postit-frontend
+  newTag: 2e77182
 
 labels:
-  - pairs:
-      environment: dev
-      app.kubernetes.io/instance: postit-1-dev
-      app.kubernetes.io/part-of: postit-1
-    includeSelectors: false
+- pairs:
+    app.kubernetes.io/instance: postit-1-dev
+    app.kubernetes.io/part-of: postit-1
+    environment: dev
