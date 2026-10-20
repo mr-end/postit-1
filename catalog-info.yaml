@@ -1,0 +1,93 @@
+apiVersion: backstage.io/v1alpha1
+kind: System
+metadata:
+  name: postit-tasks
+  description: Post-it style reminder tasks
+  tags:
+    - quarkus
+    - nodejs
+    - mariadb
+spec:
+  owner: user:default/victorfim
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: postit-1-backend
+  description: API Quarkus for postit-1 post-it tasks
+  tags:
+    - java
+    - quarkus
+    - rest
+    - mariadb
+  annotations:
+    backstage.io/source-location: url:./backend
+    backstage.io/techdocs-ref: dir:.
+    argocd/app-name: postit-1-dev
+    argocd/app-selector: rhdh-gitops=postit-1
+  links:
+    - url: https://postit-dev.apps.amv6pge9oeeda93d98.eastus.aroapp.io
+      title: Frontend (DEV)
+      icon: catalog
+spec:
+  type: service
+  lifecycle: experimental
+  owner: user:default/victorfim
+  system: postit-tasks
+  providesApis:
+    - postit-1-api
+  dependsOn:
+    - resource:postit-1-mariadb
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: postit-1-frontend
+  description: Node.js frontend for postit-1
+  tags:
+    - nodejs
+    - express
+    - frontend
+  annotations:
+    backstage.io/source-location: url:./frontend
+    argocd/app-name: postit-1-dev
+    argocd/app-selector: rhdh-gitops=postit-1
+spec:
+  type: website
+  lifecycle: experimental
+  owner: user:default/victorfim
+  system: postit-tasks
+  consumesApis:
+    - postit-1-api
+  dependsOn:
+    - component:postit-1-backend
+---
+apiVersion: backstage.io/v1alpha1
+kind: API
+metadata:
+  name: postit-1-api
+  description: REST API for postit-1 post-it tasks
+  tags:
+    - rest
+    - openapi
+spec:
+  type: openapi
+  lifecycle: experimental
+  owner: user:default/victorfim
+  system: postit-tasks
+  definition:
+    $text: ./openapi.yaml
+---
+apiVersion: backstage.io/v1alpha1
+kind: Resource
+metadata:
+  name: postit-1-mariadb
+  description: MariaDB database for postit-1
+  tags:
+    - mariadb
+    - database
+spec:
+  type: database
+  lifecycle: experimental
+  owner: user:default/victorfim
+  system: postit-tasks

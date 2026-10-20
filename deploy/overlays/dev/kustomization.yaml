@@ -1,0 +1,33 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+namespace: postit-1-dev
+
+# Namespace/project is created by AAP (CreateProject) during scaffolding —
+# not by Argo CD (no CreateNamespace, no Namespace manifest here).
+resources:
+  - ../../base
+
+patches:
+  - path: configmap.yaml
+  # secret.yaml is intentionally NOT patched here — it's gitignored and applied
+  # out-of-band (kubectl apply), so Argo CD never needs it. See deploy/README.md.
+  - path: pvc.yaml
+  - path: route.yaml
+  - path: patches/backend-replicas.yaml
+  - path: patches/frontend-replicas.yaml
+
+images:
+  - name: postit-backend
+    newName: ghcr.io/mr-end/postit-1/postit-backend
+    newTag: latest
+  - name: postit-frontend
+    newName: ghcr.io/mr-end/postit-1/postit-frontend
+    newTag: latest
+
+labels:
+  - pairs:
+      environment: dev
+      app.kubernetes.io/instance: postit-1-dev
+      app.kubernetes.io/part-of: postit-1
+    includeSelectors: false

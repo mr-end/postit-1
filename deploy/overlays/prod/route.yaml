@@ -1,0 +1,15 @@
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  name: postit-frontend
+spec:
+  host: postit.apps.amv6pge9oeeda93d98.eastus.aroapp.io
+  to:
+    kind: Service
+    name: postit-frontend
+    weight: 100
+  port:
+    targetPort: http
+  tls:
+    termination: edge
+    insecureEdgeTerminationPolicy: Redirect
